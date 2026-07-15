@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reelvault — your private screening room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0D0C;
+    --bg-raised:#171512;
+    --card:#201D19;
+    --line:#37322B;
+    --line-strong:#4A4339;
+    --text:#F3EEE3;
+    --text-dim:#A79C8B;
+    --text-faint:#736A5D;
+    --gold:#E3A857;
+    --gold-dim:#4A3A22;
+    --red:#B23B34;
+    --red-dim:#3B211F;
+    --teal:#4FA98C;
+    --teal-dim:#1E332C;
+    --rust:#C1622E;
+    --rust-dim:#3A2419;
+    --pink:#C15C82;
+    --pink-dim:#382229;
+    --amber:#D9A441;
+    --amber-dim:#3A2E17;
+    --gray:#8B8478;
+    --gray-dim:#2C2A25;
+  }
+  *{box-sizing:border-box;}
+  ::selection{background:var(--gold-dim); color:var(--gold);}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+
+  .sprockets{
+    display:flex;
+    gap:14px;
+    padding:10px 24px;
+    background:var(--bg-raised);
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  .sprockets span{
+    width:9px;
+    height:9px;
+    border-radius:2px;
+    background:var(--line-strong);
+    flex-shrink:0;
+  }
+
+  nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 32px;
+    border-bottom:1px solid var(--line);
+    background:var(--bg-raised);
+  }
+  .logo{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--text);
+    margin:0;
+  }
+  .logo span{color:var(--gold);}
+  .nav-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--text-faint);
+    letter-spacing:0.5px;
+  }
+
+  .hero{
+    max-width:980px;
+    margin:0 auto;
+    padding:56px 32px 40px;
+  }
+  .hero-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--gold);
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin:0 0 10px;
+  }
+  .hero h1{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:40px;
+    line-height:1.1;
+    margin:0 0 12px;
+    letter-spacing:0.5px;
+  }
+  .hero p{
+    color:var(--text-dim);
+    font-size:15px;
+    max-width:520px;
+    margin:0 0 32px;
+    line-height:1.6;
+  }
+
+  .dropzone{
+    border:1.5px dashed var(--line-strong);
+    border-radius:8px;
+    background:var(--bg-raised);
+    padding:40px 24px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .dropzone.active{
+    border-color:var(--gold);
+    background:var(--gold-dim);
+  }
+  .dropzone svg{color:var(--text-faint); margin-bottom:12px;}
+  .dropzone.active svg{color:var(--gold);}
+  .drop-title{
+    font-family:'Oswald',sans-serif;
+    font-size:17px;
+    font-weight:500;
+    letter-spacing:0.3px;
+    margin:0 0 6px;
+    text-transform:uppercase;
+  }
+  .drop-sub{
+    font-size:13px;
+    color:var(--text-faint);
+    margin:0;
+  }
+  .drop-sub button{
+    background:none;
+    border:none;
+    padding:0;
+    font:inherit;
+    color:var(--gold);
+    text-decoration:underline;
+    cursor:pointer;
+  }
+  input[type=file]{display:none;}
+
+  .library{
+    max-width:980px;
+    margin:0 auto;
+    padding:8px 32px 64px;
+  }
+  .library-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:1px solid var(--line);
+    padding-bottom:14px;
+    margin-bottom:24px;
+  }
+  .library-head h2{
+    font-family:'Oswald',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin:0;
+    color:var(--text-dim);
+  }
+  .library-head .count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--text-faint);
+  }
+
+  .empty{
+    padding:60px 0;
+    text-align:center;
+    color:var(--text-faint);
+    font-size:14px;
+  }
+  .empty svg{color:var(--line-strong); margin-bottom:14px;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(210px, 1fr));
+    gap:18px;
+  }
+
+  .poster{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    transition:border-color 0.15s ease;
+  }
+  .poster:hover{border-color:var(--line-strong);}
+
+  .poster-art{
+    height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    border-bottom:1px solid var(--line);
+  }
+  .quality-badge{
+    position:absolute;
+    top:8px;
+    right:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:0.5px;
+    padding:2px 6px;
+    border-radius:3px;
+    background:rgba(0,0,0,0.35);
+    border:1px solid currentColor;
+  }
+  .genre-tag{
+    position:absolute;
+    top:8px;
+    left:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.5px;
+    padding:2px 6px;
+    border-radius:3px;
+    text-transform:uppercase;
+  }
+
+  .poster-body{
+    padding:12px 14px 14px;
+  }
+  .poster-title{
+    font-size:13.5px;
+    font-weight:500;
+    margin:0 0 6px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .poster-meta{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--text-faint);
+    margin:0 0 12px;
+  }
+
+  .progress-track{
+    height:3px;
+    background:var(--line);
+    border-radius:2px;
+    overflow:hidden;
+    margin-bottom:12px;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--gold);
+    width:0%;
+    transition:width 0.5s ease;
+  }
+
+  .poster-actions{
+    display:flex;
+    gap:8px;
+  }
+  .btn{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid var(--line-strong);
+    background:var(--bg-raised);
+    color:var(--text);
+    border-radius:5px;
+    padding:8px 0;
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    font-weight:500;
+    text-decoration:none;
+    cursor:pointer;
+    transition:background 0.1s ease, border-color 0.1s ease;
+  }
+  .btn.download{
+    flex:2;
+    background:var(--gold-dim);
+    border-color:var(--gold);
+    color:var(--gold);
+  }
+  .btn.download:hover{background:var(--gold); color:#1B1500;}
+  .btn.remove:hover{border-color:var(--red); color:var(--red); background:var(--red-dim);}
+
+  .footer-row{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:20px;
+  }
+  .clear-link{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--text-faint);
+    background:none;
+    border:none;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .clear-link:hover{color:var(--red);}
+
+  .note{
+    max-width:980px;
+    margin:0 auto;
+    padding:0 32px 48px;
+    font-size:12px;
+    color:var(--text-faint);
+    font-family:'IBM Plex Mono',monospace;
+    line-height:1.7;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .progress-fill{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="sprockets" id="sprocketsTop"></div>
+
+<nav>
+  <p class="logo">REEL<span>VAULT</span></p>
+  <p class="nav-tag">local session &middot; no uploads leave this tab</p>
+</nav>
+
+<div class="hero">
+  <p class="hero-eyebrow">now screening</p>
+  <h1>Your private vault for files<br>you actually own.</h1>
+  <p>Drop anything in below and it lands straight in your library — ready to grab again whenever you need it. Nothing is sent anywhere; it all stays right here in the browser.</p>
+
+  <div class="dropzone" id="dropzone">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"></path>
+      <polyline points="7 9 12 4 17 9"></polyline>
+      <line x1="12" y1="4" x2="12" y2="15"></line>
+    </svg>
+    <p class="drop-title">Drag files to add them to your library</p>
+    <p class="drop-sub">or <button type="button" id="browseBtn">browse your device</button></p>
+    <input type="file" id="fileInput" multiple>
+  </div>
+</div>
+
+<div class="library">
+  <div class="library-head">
+    <h2>Your library</h2>
+    <span class="count" id="summary">0 titles &middot; 0 B</span>
+  </div>
+  <div id="list"></div>
+  <div class="footer-row" id="footerRow" style="display:none;">
+    <button class="clear-link" id="clearAll">clear entire library</button>
+  </div>
+</div>
+
+<p class="note">Everything above lives only in this browser tab's memory for this session — closing or reloading the page empties the vault, so download anything you want to keep before you go.</p>
+
+<div class="sprockets" id="sprocketsBottom"></div>
+
+<script>
+(function(){
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const browseBtn = document.getElementById('browseBtn');
+  const list = document.getElementById('list');
+  const summary = document.getElementById('summary');
+  const footerRow = document.getElementById('footerRow');
+  const clearAll = document.getElementById('clearAll');
+
+  let entries = [];
+  let counter = 0;
+
+  function fillSprockets(el){
+    if (!el) return;
+    const n = 60;
+    el.innerHTML = Array.from({length:n}).map(() => '<span></span>').join('');
+  }
+  fillSprockets(document.getElementById('sprocketsTop'));
+  fillSprockets(document.getElementById('sprocketsBottom'));
+
+  function formatSize(bytes){
+    if (bytes === 0) return '0 B';
+    const units = ['B','KB','MB','GB'];
+    const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+    const val = bytes / Math.pow(1024, i);
+    return (i === 0 ? val : val.toFixed(1)) + ' ' + units[i];
+  }
+
+  function formatTime(date){
+    return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  }
+
+  function qualityFor(bytes){
+    if (bytes > 10 * 1024 * 1024) return {label:'4K', color:'var(--gold)'};
+    if (bytes > 1 * 1024 * 1024) return {label:'HD', color:'var(--teal)'};
+    return {label:'SD', color:'var(--gray)'};
+  }
+
+  function genreFor(type){
+    if (type.startsWith('image/')) return {label:'photo', color:'var(--teal)', dim:'var(--teal-dim)'};
+    if (type.startsWith('video/')) return {label:'video', color:'var(--rust)', dim:'var(--rust-dim)'};
+    if (type.startsWith('audio/')) return {label:'audio', color:'var(--pink)', dim:'var(--pink-dim)'};
+    if (type === 'application/pdf') return {label:'doc', color:'var(--amber)', dim:'var(--amber-dim)'};
+    return {label:'file', color:'var(--gray)', dim:'var(--gray-dim)'};
+  }
+
+  function iconFor(type){
+    if (type.startsWith('image/')) {
+      return '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>';
+    }
+    if (type.startsWith('video/')) {
+      return '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="14" height="14" rx="2"></rect><polygon points="17 9 22 6 22 18 17 15"></polygon></svg>';
+    }
+    if (type.startsWith('audio/')) {
+      return '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>';
+    }
+    return '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>';
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function addFiles(fileList){
+    const newIds = [];
+    Array.from(fileList).forEach(file => {
+      counter += 1;
+      const url = URL.createObjectURL(file);
+      entries.push({
+        id: counter,
+        file,
+        url,
+        addedAt: new Date()
+      });
+      newIds.push(counter);
+    });
+    render();
+    newIds.forEach(id => animateIn(id));
+  }
+
+  function animateIn(id){
+    requestAnimationFrame(() => {
+      const el = document.querySelector('.progress-fill[data-id="' + id + '"]');
+      if (el) el.style.width = '100%';
+    });
+  }
+
+  function removeEntry(id){
+    const idx = entries.findIndex(e => e.id === id);
+    if (idx > -1){
+      URL.revokeObjectURL(entries[idx].url);
+      entries.splice(idx, 1);
+      render();
+    }
+  }
+
+  function render(){
+    if (entries.length === 0){
+      list.innerHTML = `<div class="empty">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M2 9h20"></path></svg>
+        <div>Your library is empty — add a file above to get started.</div>
+      </div>`;
+      footerRow.style.display = 'none';
+      summary.textContent = '0 titles · 0 B';
+      return;
+    }
+
+    footerRow.style.display = 'flex';
+    const totalSize = entries.reduce((sum, e) => sum + e.file.size, 0);
+    summary.textContent = entries.length + (entries.length === 1 ? ' title' : ' titles') + ' · ' + formatSize(totalSize);
+
+    list.innerHTML = '<div class="grid">' + entries.map(e => {
+      const q = qualityFor(e.file.size);
+      const g = genreFor(e.file.type);
+      return `
+      <div class="poster">
+        <div class="poster-art" style="background:${g.dim}; color:${g.color};">
+          <span class="genre-tag" style="background:rgba(0,0,0,0.35); color:${g.color};">${g.label}</span>
+          <span class="quality-badge" style="color:${q.color};">${q.label}</span>
+          ${iconFor(e.file.type)}
+        </div>
+        <div class="poster-body">
+          <p class="poster-title" title="${escapeHtml(e.file.name)}">${escapeHtml(e.file.name)}</p>
+          <p class="poster-meta">${formatSize(e.file.size)} &middot; added ${formatTime(e.addedAt)}</p>
+          <div class="progress-track"><div class="progress-fill" data-id="${e.id}"></div></div>
+          <div class="poster-actions">
+            <a class="btn download" href="${e.url}" download="${escapeHtml(e.file.name)}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"></path><polyline points="7 11 12 16 17 11"></polyline><path d="M5 21h14"></path></svg>
+              Download
+            </a>
+            <button class="btn remove" data-id="${e.id}" title="Remove">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    }).join('') + '</div>';
+
+    list.querySelectorAll('.btn.remove').forEach(btn => {
+      btn.addEventListener('click', () => removeEntry(Number(btn.dataset.id)));
+    });
+
+    entries.forEach(e => {
+      const el = list.querySelector('.progress-fill[data-id="' + e.id + '"]');
+      if (el) el.style.width = '100%';
+    });
+  }
+
+  browseBtn.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('click', (ev) => {
+    if (ev.target === browseBtn) return;
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) addFiles(fileInput.files);
+    fileInput.value = '';
+  });
+
+  ['dragenter','dragover'].forEach(evt => {
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropzone.classList.add('active');
+    });
+  });
+  ['dragleave','drop'].forEach(evt => {
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      if (evt === 'dragleave' && e.target !== dropzone) return;
+      dropzone.classList.remove('active');
+    });
+  });
+  dropzone.addEventListener('drop', (e) => {
+    if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+  });
+
+  clearAll.addEventListener('click', () => {
+    entries.forEach(e => URL.revokeObjectURL(e.url));
+    entries = [];
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
